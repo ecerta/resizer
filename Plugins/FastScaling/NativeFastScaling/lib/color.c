@@ -229,7 +229,7 @@ bool BitmapBgra_populate_histogram (Context * context, BitmapBgra * bmp, uint64_
 
 
  static float derive_constant (float x, float slope, float sign){
-    return (-2 * slope * fabs (x) + sign * sqrtf (1 - 4 * slope * fabs (x)) + 1) / 2 * slope;
+    return (float)((-2.0f * slope * fabs (x) + sign * sqrtf ((float)(1.0f - 4.0f * slope * fabs (x))) + 1.0f) / 2.0f * slope);
  }
 
 
