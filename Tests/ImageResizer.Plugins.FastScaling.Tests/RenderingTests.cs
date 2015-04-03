@@ -210,7 +210,7 @@ namespace ImageResizer.Plugins.FastScaling.Tests
         [InlineData(10, 0.5,0.5,0.6)]
         [InlineData(10, 1,0.5,0.6)]
 
-        void PlotColorspaces(WorkingFloatspace mode, float a, float b, float z)
+        void PlotColorspaces(Workingspace mode, float a, float b, float z)
         {
 
             var c = new ExecutionContext();
