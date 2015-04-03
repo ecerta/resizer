@@ -46,6 +46,16 @@ srgb_to_linear(float s)
         return (float)pow((s + 0.055f) / (1 + 0.055f), 2.4f);
 }
 
+static inline float remove_gamma (Context * context, float value)
+{
+    return pow (value, context->colorspace.gamma);
+}
+
+
+static inline float apply_gamma (Context * context, float value)
+{
+    return pow (value, context->colorspace.gamma_inverse);
+}
 
 
 
@@ -64,26 +74,32 @@ static inline float sigmoid_inverse (const SigmoidInfo * info, float y){
     // x = (b (-k) - b + k z) / (a (k + 1))
     const float k = (y - info->y_offset) / info->y_coeff;
 
-    bool swap = (info->constant < 0) != (k < 0);
+    const float signed_k = (info->constant < 0) != (k < 0) ? k : -k;
 
-    const float r = k * info->constant / (swap ? 1 + k : 1 - k);
+     //r = k * info->constant / (1 + signed_k)
 
-    return (r - info->x_offset) / info->x_coeff;
+    return ((k * info->constant / (1 + signed_k)) - info->x_offset) / info->x_coeff;
 }
 
 
-
-
-
-
-static inline float Context_srgb_to_floatspace (Context * c, uint8_t srgb_value){
-    return c->colorspace.byte_to_float[srgb_value];
+static inline float Context_srgb_to_floatspace_uncached (Context * context, uint8_t value){
+    float v = ((float)value) * (float)(1.0f / 255.0f);
+    if (context->colorspace.apply_srgb) v = srgb_to_linear (v);
+    if (context->colorspace.apply_gamma) v = remove_gamma (context, v);
+    if (context->colorspace.apply_sigmoid) v = sigmoid (&context->colorspace.sigmoid, v);
+    return v;
 }
 
-static inline uint8_t Context_floatspace_to_srgb (Context * c, float space_value){
-    float v = (c->colorspace.floatspace & Floatspace_sigmoid) > 0 ? sigmoid_inverse (&c->colorspace.sigmoid, space_value) : space_value;
+static inline float Context_srgb_to_floatspace (Context * context, uint8_t value){
+    //if (!context->colorspace.apply_srgb) return Context_srgb_to_floatspace_uncached (context,value);
+    // return context->colorspace.floatspace == Floatspace_as_is ? (value * (1.f/255.f)) :    context->colorspace.byte_to_float[value];
+    return  context->colorspace.byte_to_float[value]; //2x faster, even if just multiplying by 1/255. 3x faster than the entire calculation.
+}
 
-    return uchar_clamp_ff ((c->colorspace.floatspace & Floatspace_srgb_to_linear) > 0 ? linear_to_srgb (v) : 255.0f * v);
+static inline uint8_t Context_floatspace_to_srgb (Context * context, float space_value){
+    float v = context->colorspace.apply_sigmoid ? sigmoid_inverse (&context->colorspace.sigmoid, space_value) : space_value;
+    v = context->colorspace.apply_gamma ? v = apply_gamma (context, v) : v;
+    return uchar_clamp_ff (context->colorspace.apply_srgb ? linear_to_srgb (v) : 255.0f * v);
 }
 
 

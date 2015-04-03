@@ -130,6 +130,7 @@ uint8_t Context_floatspace_to_byte (Context * c, float space_value);
 typedef enum _WorkingFloatspace {
     Floatspace_as_is = 0,
     Floatspace_srgb_to_linear = 1,
+
     Floatspace_sigmoid = 2,
     Floatspace_srgb_to_sigmoid = 3,
 
@@ -137,7 +138,9 @@ typedef enum _WorkingFloatspace {
     Floatspace_srgb_to_sigmoid_2 = 1 | 2 | 4,
 
     Floatspace_sigmoid_3 = 2 | 8,
-    Floatspace_srgb_to_sigmoid_3 = 1 | 2 | 8
+    Floatspace_srgb_to_sigmoid_3 = 1 | 2 | 8,
+
+    Floatspace_gamma = 32,
 
 } WorkingFloatspace;
 
@@ -297,7 +300,7 @@ ConvolutionKernel* ConvolutionKernel_create_guassian_normalized(Context * contex
 ConvolutionKernel* ConvolutionKernel_create_guassian_sharpen(Context * context, double stdDev, uint32_t radius);
 
 
-bool BitmapBgra_populate_intensity_histogram (Context * context, BitmapBgra * bmp, uint64_t * histogram, uint32_t histogram_size, uint64_t * pixels_sampled);
+bool BitmapBgra_populate_histogram (Context * context, BitmapBgra * bmp, uint64_t * histograms, uint32_t histogram_size_per_channel, uint32_t histogram_count, uint64_t * pixels_sampled);
 
 
 #ifdef __cplusplus

@@ -153,7 +153,7 @@ bool BitmapFloat_apply_color_matrix(Context * context, BitmapFloat * bmp, const 
 
 
 
-bool BitmapBgra_populate_intensity_histogram (Context * context, BitmapBgra * bmp, uint64_t * histogram, uint32_t histogram_size, uint64_t * pixels_sampled)
+bool BitmapBgra_populate_histogram (Context * context, BitmapBgra * bmp, uint64_t * histograms, const uint32_t histogram_size_per_channel, const uint32_t histogram_count, uint64_t * pixels_sampled)
 {
     const uint32_t row = 0;
     const uint32_t count = bmp->h;
@@ -162,16 +162,44 @@ bool BitmapBgra_populate_intensity_histogram (Context * context, BitmapBgra * bm
     const uint32_t w = bmp->w;
     const uint32_t h = umin (row + count, bmp->h);
 
-    const int shift = 18 - intlog2 (histogram_size);
+    const int shift = 18 - intlog2 (histogram_size_per_channel);
+    const int shift_plus_one = shift + 1;
 
     if (ch == 4 || ch == 3) {
 
-        for (uint32_t y = row; y < h; y++)
-            for (uint32_t x = 0; x < w; x++) {
-                uint8_t* const __restrict data = bmp->pixels + stride * y + x * ch;
+        if (histogram_count == 1){
 
-                histogram[(306 * data[2] + 601 * data[1] + 117 * data[0]) >> shift]++;
+            for (uint32_t y = row; y < h; y++){
+                for (uint32_t x = 0; x < w; x++) {
+                    uint8_t* const __restrict data = bmp->pixels + stride * y + x * ch;
+
+                    histograms[(306 * data[2] + 601 * data[1] + 117 * data[0]) >> shift]++;
+                }
             }
+        } else if (histogram_count == 3){
+            for (uint32_t y = row; y < h; y++){
+                for (uint32_t x = 0; x < w; x++) {
+                    uint8_t* const __restrict data = bmp->pixels + stride * y + x * ch;
+                    histograms[data[2] >> shift]++;
+                    histograms[(data[1] >> shift) + histogram_size_per_channel]++;
+                    histograms[(data[0] >> shift) + 2 * histogram_size_per_channel]++;
+                }
+            }
+        }
+        else if (histogram_count == 2){
+            for (uint32_t y = row; y < h; y++){
+                for (uint32_t x = 0; x < w; x++) {
+                    uint8_t* const __restrict data = bmp->pixels + stride * y + x * ch;
+                    //Calculate luminosity and saturation
+                    histograms[(306 * data[2] + 601 * data[1] + 117 * data[0]) >> shift]++;
+                    histograms[histogram_size_per_channel + (max(abs ((int)data[2] - (int)data[1]),abs ((int)data[1] - (int)data[0])) >> shift_plus_one)]++;
+                }
+            }
+        }
+        else{
+            CONTEXT_error (context, Invalid_internal_state);
+            return false;
+        }
 
         *(pixels_sampled) = (h - row) * w;
     }
@@ -208,8 +236,10 @@ bool BitmapBgra_populate_intensity_histogram (Context * context, BitmapBgra * bm
  void Context_set_floatspace (Context * context,  WorkingFloatspace space, float a, float b, float c){
      context->colorspace.floatspace = space;
 
-     bool use_srgb = (space & Floatspace_srgb_to_linear) > 0;
-     bool use_sigmoid = (space & Floatspace_sigmoid) > 0;
+
+     context->colorspace.apply_srgb = (space & Floatspace_srgb_to_linear) > 0;
+     context->colorspace.apply_sigmoid = (space & Floatspace_sigmoid) > 0;
+     context->colorspace.apply_gamma = (space & Floatspace_gamma) > 0;
 
      if ((space & Floatspace_sigmoid_3) > 0){
          Context_sigmoid_internal (context, -2, a, derive_constant (a + b * -2, c, 1));
@@ -221,26 +251,28 @@ bool BitmapBgra_populate_intensity_histogram (Context * context, BitmapBgra * bm
          Context_sigmoid_internal (context, a, b, c);
      }
 
+     if (context->colorspace.apply_gamma){
+         context->colorspace.gamma = a;
+         context->colorspace.gamma_inverse = (float)(1.0 / ((double)a));
+     }
+
      for (uint32_t n = 0; n < 256; n++) {
-         float v = ((float)n) / 255.0f;
-         if (use_srgb) v = srgb_to_linear (v);
-         if (use_sigmoid) v = sigmoid (&context->colorspace.sigmoid, v);
-         context->colorspace.byte_to_float[n] = v;
+         context->colorspace.byte_to_float[n] = Context_srgb_to_floatspace_uncached (context, n);
      }
  }
 
  void Context_autoset_floatspace (Context * context, BitmapBgra * image){
-     uint64_t histogram[2];
+    /* uint64_t histogram[2];
      uint64_t samples;
-     BitmapBgra_populate_intensity_histogram (context, image, histogram, 2, &samples);
+     BitmapBgra_populate_histogram (context, image, histogram, 2,1, &samples);
      if (histogram[0] > histogram[1] * 0.66){
          Context_set_floatspace (context, Floatspace_as_is, 0, 0, 0);
 
      }
-     else{
+     else{*/
          Context_set_floatspace (context, Floatspace_srgb_to_linear, 0, 0, 0);
 
-     }
+     //}
  }
 
 
