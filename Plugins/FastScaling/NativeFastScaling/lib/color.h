@@ -17,6 +17,12 @@ extern "C" {
 
 typedef struct BitmapFloatStruct BitmapFloat;
 
+typedef struct BitmapBgraStruct BitmapBgra;
+
+typedef struct ContextStruct Context;
+
+
+
 static inline float
 linear_to_srgb(float clr)
 {
@@ -38,6 +44,46 @@ srgb_to_linear(float s)
         return s / 12.92f;
     else
         return (float)pow((s + 0.055f) / (1 + 0.055f), 2.4f);
+}
+
+
+
+
+//y = -(x * 2 - 1) / (abs(x * 2 - 1) - 1.2)
+static inline float sigmoid (const SigmoidInfo * info, float x){
+    //k = r / (abs(r) + z)
+    //r = x * a + b
+    //k = (x * a + b) / (abs(x * a + b) + z)
+    //y = c * k + d;
+    const float r = x * info->x_coeff + info->x_offset;
+    return info->y_coeff * (r / (fabs (r) + info->constant)) + info->y_offset;
+}
+
+static inline float sigmoid_inverse (const SigmoidInfo * info, float y){
+    //x = (b (-k)+b-k z)/(a (k-1))
+    // x = (b (-k) - b + k z) / (a (k + 1))
+    const float k = (y - info->y_offset) / info->y_coeff;
+
+    bool swap = (info->constant < 0) != (k < 0);
+
+    const float r = k * info->constant / (swap ? 1 + k : 1 - k);
+
+    return (r - info->x_offset) / info->x_coeff;
+}
+
+
+
+
+
+
+static inline float Context_srgb_to_floatspace (Context * c, uint8_t srgb_value){
+    return c->colorspace.byte_to_float[srgb_value];
+}
+
+static inline uint8_t Context_floatspace_to_srgb (Context * c, float space_value){
+    float v = (c->colorspace.floatspace & Floatspace_sigmoid) > 0 ? sigmoid_inverse (&c->colorspace.sigmoid, space_value) : space_value;
+
+    return uchar_clamp_ff ((c->colorspace.floatspace & Floatspace_srgb_to_linear) > 0 ? linear_to_srgb (v) : 255.0f * v);
 }
 
 
