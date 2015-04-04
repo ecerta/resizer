@@ -58,9 +58,7 @@ namespace Bench
             //CompareGdToDefault("bit");
             //CompareGdToDefault("encode");
 
-            //CompareFastScaling("bit");
-
-            CompareFastScalingToDefaultHQ("bit");
+            CompareFastScalingToDefault("bit");
 
             Console.Write("Done\n");
             Console.ReadKey();
@@ -417,16 +415,18 @@ namespace Bench
         public static void CompareFastScalingToDefault(string segment = "op")
         {
             var settings = BenchmarkingDefaults();
-            settings.Images.AddBlankImages(
-                new Tuple<int, int, string>[] { new Tuple<int, int, string>(4000, 3000, "jpg"), new Tuple<int, int, string>(1600, 800, "png") });
+            settings.Images.AddBlankImages( //new Tuple<int, int, string>(100 * 4 * 16, 100 * 4 * 16, "jpg"),
+                new Tuple<int, int, string>[] {  new Tuple<int, int, string>(100 * 4 * 16, 100 * 3 * 16, "jpg") });
             settings.SharedInstructions = new Instructions[]{new Instructions(
-                "width=800&scale=both") , new Instructions("width=200&scale=both")};
+                "width=400&scale=both&ignoreicc=true") ,new Instructions("width=200&scale=both&ignoreicc=true"), new Instructions("width=100&scale=both&ignoreicc=true")};
      
             settings.SegmentNameFilter = segment;
-            settings.ExclusiveTimeSignificantMs = 1;
+            settings.ExclusiveTimeSignificantMs = 0.2;
             var configs = new Tuple<Config, Instructions, string>[]{
                     new Tuple<Config, Instructions, string>(ConfigWithPlugins(),null,"System.Drawing"),
-                    new Tuple<Config, Instructions, string>(ConfigWithPlugins("ImageResizer.Plugins.FastScaling.FastScalingPlugin, ImageResizer.Plugins.FastScaling"),new Instructions("fastscale=true;turbo=true;min_scaled_weighted=0"),"FastScaling")};
+                    new Tuple<Config, Instructions, string>(ConfigWithPlugins("ImageResizer.Plugins.FastScaling.FastScalingPlugin, ImageResizer.Plugins.FastScaling"),new Instructions("f=13&f.interpolate_at_least=1&f.space=0"),"FastScaling, linear halving"),
+                    new Tuple<Config, Instructions, string>(ConfigWithPlugins("ImageResizer.Plugins.FastScaling.FastScalingPlugin, ImageResizer.Plugins.FastScaling"),new Instructions("f=0"),"FastScaling"), 
+                    new Tuple<Config, Instructions, string>(ConfigWithPlugins("ImageResizer.Plugins.FastScaling.FastScalingPlugin, ImageResizer.Plugins.FastScaling"),new Instructions("f=16&f.interpolate_at_least=-1"),"FastScaling - slowest possible configuration")};
 
             Compare(settings, configs.Reverse());
 
@@ -446,8 +446,8 @@ namespace Bench
             //settings.ParallelThreads = 2;
             var configs = new Tuple<Config, Instructions, string>[]{
                     new Tuple<Config, Instructions, string>(ConfigWithPlugins(),null,"System.Drawing"),
-                    new Tuple<Config, Instructions, string>(ConfigWithPlugins("ImageResizer.Plugins.FastScaling.FastScalingPlugin, ImageResizer.Plugins.FastScaling"),new Instructions("fastscale=true;f=0"),"FastCubic"),
-                    new Tuple<Config, Instructions, string>(ConfigWithPlugins("ImageResizer.Plugins.FastScaling.FastScalingPlugin, ImageResizer.Plugins.FastScaling"),new Instructions("fastscale=true;f=2"),"CatmullRom")};
+                    new Tuple<Config, Instructions, string>(ConfigWithPlugins("ImageResizer.Plugins.FastScaling.FastScalingPlugin, ImageResizer.Plugins.FastScaling"),new Instructions("f=0"),"FastCubic"),
+                    new Tuple<Config, Instructions, string>(ConfigWithPlugins("ImageResizer.Plugins.FastScaling.FastScalingPlugin, ImageResizer.Plugins.FastScaling"),new Instructions("f=2"),"CatmullRom")};
 
             Compare(settings, configs.Reverse());
 
@@ -456,20 +456,6 @@ namespace Bench
 
 
 
-        public static void CompareFastScaling(string segment = "op")
-        {
-            var settings = ScalingComparisonDefault();
-            settings.SegmentNameFilter = segment;
-            var c = ConfigWithPlugins("ImageResizer.Plugins.FastScaling.FastScalingPlugin, ImageResizer.Plugins.FastScaling");
-            var configs = new Tuple<Config, Instructions, string>[]{
-                    new Tuple<Config, Instructions, string>(new Config(),null,"System.Drawing"),
-                    new Tuple<Config, Instructions, string>(c,new Instructions("&fastscale=true"),"FastScaling Bicubic - no skipped source pixels"),
-                    new Tuple<Config, Instructions, string>(c,new Instructions("&fastscale=true&window=1.4"),"FastScaling Bicubic w/ 6x window size (GDI HQ Bicubic prefilter equivalent)"),
-                    new Tuple<Config, Instructions, string>(c,new Instructions("&fastscale=true&turbo=true"),"FastScaling+Halving"),
-                    new Tuple<Config, Instructions, string>(c,new Instructions("&fastscale=true&f=7&window=1.4"),"FastScaling6X Lanczos")};
-
-            Compare(settings, configs.Reverse());
-        }
 
         public static void CompareFastScalingWindows(string segment = "op")
         {

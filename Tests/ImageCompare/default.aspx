@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="default.aspx.cs" Inherits="ImageCompare._default" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true"  %>
 
 <!DOCTYPE html>
 
@@ -16,7 +16,7 @@
         <option value="rose-leaf.jpg">rose-leaf.jpg</option>
         <option value="Sun_256.png">Sun_256.png</option>
         <option value="rings.png">rings.png</option>
-        
+        <option value="tractor-tiny.jpg">tractor-tiny.jpg</option>
         <option value="rings2.png">rings2.png</option>
         <%= String.Join("\n",System.IO.Directory.GetFiles(System.IO.Path.Combine(MapPath("~/"),@"..\..\Samples\Images\private"), "*.jpg").Select(path => "private/" + System.IO.Path.GetFileName(path)).Select(p => "<option value=\"" + p + "\">" + p + "</option>")) %>
         
