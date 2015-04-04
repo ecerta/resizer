@@ -214,12 +214,10 @@ bool BitmapBgra_populate_histogram (Context * context, BitmapBgra * bmp, uint64_
 
 bool BitmapBgra_render_histogram (Context * context, BitmapBgra * canvas, uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint64_t * histogram, const uint32_t histogram_size, uint64_t pixels_sampled, uint8_t color_r, uint8_t color_g, uint8_t color_b)
 {
-    const uint32_t row = 0;
-    const uint32_t count = canvas->h;
     const uint32_t stride = canvas->stride;
     const uint32_t ch = BitmapPixelFormat_bytes_per_pixel (canvas->fmt);
 
-    if (x + w >= canvas->w || x < 0 || y + h > canvas->h){
+    if (x + w >= canvas->w || y + h > canvas->h){
         CONTEXT_error (context, Invalid_internal_state);
         return false;
     }
@@ -246,7 +244,7 @@ bool BitmapBgra_render_histogram (Context * context, BitmapBgra * canvas, uint32
                 uint8_t* pixel = canvas->pixels + stride * cy + cx * ch;
                 uint32_t histogram_index = (cx - x) << shift;
                 uint64_t sum = 0;
-                for (uint32_t i = 0; i < shift + 1; i++)
+                for (int32_t i = 0; i < shift + 1; i++)
                     sum += histogram[histogram_index + i];
 
                 if (sum > threshold){
