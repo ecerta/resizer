@@ -91,7 +91,7 @@ namespace ImageResizer{
 
                     Workingspace space = (Workingspace)(int)fmax (-1, fmin (200, GetDouble (query, "f.space", 1)));
 
-
+                    opts->debug_options = System::String::IsNullOrEmpty (query->Get ("f.hist")) ? 0 : 1;
                     //TODO: permit it to work with increments of 90 rotation
                     //Write polygon math method to determin the angle of the target area.
 

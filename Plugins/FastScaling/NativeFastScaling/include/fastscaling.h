@@ -247,6 +247,8 @@ typedef struct RenderDetailsStruct {
     //Enables profiling
     bool enable_profiling;
 
+    int debug_options;
+
 } RenderDetails;
 
 

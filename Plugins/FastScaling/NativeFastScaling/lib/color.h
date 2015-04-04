@@ -209,6 +209,8 @@ bool BitmapFloat_luv_to_linear_rows(Context * context, BitmapFloat * bit, const 
 bool BitmapFloat_apply_color_matrix(Context * context, BitmapFloat * bmp, const uint32_t row, const uint32_t count, float*  m[5]);
 bool BitmapBgra_apply_color_matrix(Context * context, BitmapBgra * bmp, const uint32_t row, const uint32_t count, float* const __restrict  m[5]);
 
+bool BitmapBgra_render_histogram (Context * context, BitmapBgra * canvas, uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint64_t * histogram, const uint32_t histogram_size, uint64_t pixels_sampled, uint8_t color_r, uint8_t color_g, uint8_t color_b);
+
 
 #ifdef __cplusplus
 }

@@ -632,6 +632,36 @@ bool Renderer_perform_render(Context * context, Renderer * r)
     }
 
     prof_stop(context,"perform_render", true, false);
+
+    //TODO, display histogram
+    if (r->details->debug_options > 0 && finalDest->w > 351 && finalDest->h > 100){
+
+        uint64_t histograms[64 * 10];
+        memset (&histograms[0], 0, sizeof (uint64_t) * 64 * 10);
+
+        uint8_t colors[15] = {128, 128, 128, 255, 0, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255};
+
+        uint64_t pixel_count;
+
+        if (!BitmapBgra_populate_histogram (context, finalDest, &histograms[0], 64, 2, &pixel_count) ||
+            !BitmapBgra_populate_histogram (context, finalDest, &histograms[128], 64, 3, &pixel_count) ||
+            !BitmapBgra_populate_histogram (context, r->source, &histograms[256], 64, 2, &pixel_count) ||
+            !BitmapBgra_populate_histogram (context, r->source, &histograms[384], 64, 3, &pixel_count)){
+
+            CONTEXT_add_to_callstack (context);
+            return false;
+        }
+
+        for (int j = 0; j < 2; j++)
+            for (int i = 0; i < 5; i++)
+                if (!BitmapBgra_render_histogram (context, finalDest, i * 70, j * (finalDest->h - 50), 70, 50, &histograms[(j * 64 * 5) + i * 64], 64, pixel_count, colors[i * 3], colors[i * 3 + 1], colors[i * 3 + 2])){
+                    CONTEXT_add_to_callstack (context);
+                    return false;
+                }
+
+
+    }
+
     //p->Stop("Render", true, false);
     //GC::KeepAlive(wbSource);
     //GC::KeepAlive(wbCanvas);

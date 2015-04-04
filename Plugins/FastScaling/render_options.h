@@ -49,7 +49,7 @@ namespace ImageResizer{
                         HalveOnlyWhenPerfect = true;
                     }
 
-
+                    property int debug_options;
 
                     property uint32_t Filter;
                     property float SamplingWindowOverride;

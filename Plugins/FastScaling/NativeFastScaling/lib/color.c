@@ -162,8 +162,7 @@ bool BitmapBgra_populate_histogram (Context * context, BitmapBgra * bmp, uint64_
     const uint32_t w = bmp->w;
     const uint32_t h = umin (row + count, bmp->h);
 
-    const int shift = 18 - intlog2 (histogram_size_per_channel);
-    const int shift_plus_one = shift + 1;
+    const int shift = 8 - intlog2 (histogram_size_per_channel);
 
     if (ch == 4 || ch == 3) {
 
@@ -192,7 +191,7 @@ bool BitmapBgra_populate_histogram (Context * context, BitmapBgra * bmp, uint64_
                     uint8_t* const __restrict data = bmp->pixels + stride * y + x * ch;
                     //Calculate luminosity and saturation
                     histograms[(306 * data[2] + 601 * data[1] + 117 * data[0]) >> shift]++;
-                    histograms[histogram_size_per_channel + (max(abs ((int)data[2] - (int)data[1]),abs ((int)data[1] - (int)data[0])) >> shift_plus_one)]++;
+                    histograms[histogram_size_per_channel + (max(255,max(abs ((int)data[2] - (int)data[1]),abs ((int)data[1] - (int)data[0]))) >> shift)]++;
                 }
             }
         }
@@ -209,6 +208,67 @@ bool BitmapBgra_populate_histogram (Context * context, BitmapBgra * bmp, uint64_
     }
     return true;
 }
+
+
+
+
+bool BitmapBgra_render_histogram (Context * context, BitmapBgra * canvas, uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint64_t * histogram, const uint32_t histogram_size, uint64_t pixels_sampled, uint8_t color_r, uint8_t color_g, uint8_t color_b)
+{
+    const uint32_t row = 0;
+    const uint32_t count = canvas->h;
+    const uint32_t stride = canvas->stride;
+    const uint32_t ch = BitmapPixelFormat_bytes_per_pixel (canvas->fmt);
+
+    if (x + w >= canvas->w || x < 0 || y + h > canvas->h){
+        CONTEXT_error (context, Invalid_internal_state);
+        return false;
+    }
+    const int histogram_bits_to_display = intlog2 (w);
+    const int histogram_bits_available = intlog2 (histogram_size);
+    const int shift = histogram_bits_available - histogram_bits_to_display;
+
+    if ((uint32_t)pow (2.0f, histogram_bits_available) != histogram_size){
+        CONTEXT_error (context, Invalid_internal_state);
+        return false;
+    }
+
+    uint64_t max_value = 0;
+    for (uint32_t i = 0; i < histogram_size; i++)
+        max_value = umax64 (max_value, histogram[i]);
+
+
+    if (ch == 4 || ch == 3) {
+
+
+        for (uint32_t cy = y; cy < (y + h); cy++){
+            uint64_t threshold = (y + h - 1 - cy) * max_value * (shift + 1) / (h - 1);
+            for (uint32_t cx = x; cx < (x + w); cx++) {
+                uint8_t* pixel = canvas->pixels + stride * cy + cx * ch;
+                uint32_t histogram_index = (cx - x) << shift;
+                uint64_t sum = 0;
+                for (uint32_t i = 0; i < shift + 1; i++)
+                    sum += histogram[histogram_index + i];
+
+                if (sum > threshold){
+                    pixel[0] = color_b;
+                    pixel[1] = color_g;
+                    pixel[2] = color_r;
+                }
+                if (cy == y + h - 1){
+                    pixel[0] = pixel[1] = pixel[2] = (cx - x) >> (8 - histogram_bits_to_display);
+                }
+
+            }
+        }
+
+    }
+    else {
+        CONTEXT_error (context, Unsupported_pixel_format);
+        return false;
+    }
+    return true;
+}
+
 
 
 

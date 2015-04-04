@@ -79,6 +79,7 @@ namespace ImageResizer{
 
                         to->interpolate_last_percent = from->InterpolateLastPercent;
 
+                        to->debug_options = from->debug_options;
 
                         if (to->interpolation != nullptr){
                             InterpolationDetails_destroy (c->GetContext (), to->interpolation);
