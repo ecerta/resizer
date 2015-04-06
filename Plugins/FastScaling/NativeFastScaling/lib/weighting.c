@@ -103,7 +103,7 @@ static double filter_sinc_windowed(const InterpolationDetails * d, double t)
 
 
 static double filter_jinc (const InterpolationDetails * d, double t) {
-    const double x = abs (t) / d->blur;
+    const double x = fabs (t) / d->blur;
     if (x == 0.0)
         return(0.5*IR_PI);
     return(BESSEL_O1 (IR_PI*x) / x);
