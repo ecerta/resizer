@@ -10,12 +10,14 @@
 #endif
 
 #ifdef _MSC_VER
-#define BESSEL_O1 _j1
+#define BESSEL_01 _j1
 #else
-#define BESSEL_O1 __builtin_j1
+#ifdef __GLIBC__
+#define BESSEL_01 __builtin_j1
+#else
+#define BESSEL_01 j1
 #endif
-
-
+#endif
 
 
 #include "fastscaling_private.h"
@@ -106,7 +108,7 @@ static double filter_jinc (const InterpolationDetails * d, double t) {
     const double x = fabs (t) / d->blur;
     if (x == 0.0)
         return(0.5*IR_PI);
-    return(BESSEL_O1 (IR_PI*x) / x);
+    return(BESSEL_01 (IR_PI*x) / x);
     ////x crossing #1 1.2196698912665045
 }
 
@@ -139,7 +141,7 @@ static double filter_ginseng (const InterpolationDetails * d, double t)
         return 0;
     }
     const double jinc_input = 1.2196698912665045 * t_pi / d->window;
-    const double jinc_output = BESSEL_O1 (jinc_input) / (jinc_input * 0.5);
+    const double jinc_output = BESSEL_01 (jinc_input) / (jinc_input * 0.5);
 
     return jinc_output * sin (t_pi) / (t_pi);
 
