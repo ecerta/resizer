@@ -12,7 +12,7 @@
 #ifdef _MSC_VER
 #define BESSEL_O1 _j1
 #else
-#define BESSEL_O1 j1
+#define BESSEL_O1 __builtin_j1
 #endif
 
 
