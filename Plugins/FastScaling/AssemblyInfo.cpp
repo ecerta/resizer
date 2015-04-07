@@ -38,7 +38,7 @@ using namespace ImageResizer::Util;
 #endif
 
 [assembly:AssemblyCompanyAttribute ("Imazen LLC")];
-[assembly:AssemblyCopyrightAttribute ("Copyright � 2015 Imazen LLC")];
+[assembly:AssemblyCopyrightAttribute (L"Copyright © 2015 Imazen LLC")];
 
 // Version information for an assembly consists of the following four values:
 //
@@ -49,18 +49,14 @@ using namespace ImageResizer::Util;
 //
 // You can specify all the values or you can default the Revision and Build Numbers
 // by using the '*' as shown below:/*
-[assembly:AssemblyVersionAttribute ("4.0.0.0")];
-[assembly:AssemblyFileVersionAttribute ("4.0.0.591")];
-[assembly:AssemblyInformationalVersionAttribute ("4.0.0-prerelease.591")];
+[assembly: AssemblyVersionAttribute("4.0.0.0")];
+[assembly: AssemblyFileVersionAttribute("4.0.0.968")];
+[assembly: AssemblyInformationalVersionAttribute("4.0.0-prerelease.968")];
 
-[assembly:CommitAttribute ("331d72ae9881981a0cce986083afee8b934f6eae")];
+[assembly: CommitAttribute("2cc09f42cda96fd4268c688e2b8bbca7848be4b0")];
 
 
 // These commented out settings are for the build script to access
 // [assembly: PackageName("Resizer")]
 // [assembly: NugetVersionAttribute("4.0.0-prerelease")]
 // [assembly: DownloadServer("http://downloads.imageresizing.net/")]
-[assembly: CommitAttribute("35c8958d6292e5de2a80d7ec553dd86cbb020eae")]
-[assembly: AssemblyVersionAttribute("4.0.0.0")]
-[assembly: AssemblyFileVersionAttribute("4.0.0.515")]
-[assembly: AssemblyInformationalVersionAttribute("4.0.0-prerelease.515")]
