@@ -85,7 +85,20 @@ namespace ImageResizer{
 
                     opts->InterpolateLastPercent = opts->InterpolateLastPercent < 1 ? -1 : opts->InterpolateLastPercent;
 
+
                     Workingspace space = (Workingspace)(int)fmax (-1, fmin (200, GetDouble (query, "f.space", 1)));
+                    float space_param_a = (float)GetDouble (query, "f.a", 0);
+                    float space_param_b = (float)GetDouble (query, "f.b", 0);
+                    float space_param_c = (float)GetDouble (query, "f.c", 0);
+
+                    double preserve_which = fmax (-9.999, fmin (9.999, GetDouble (query, "f.preserve", 0)));
+                    if (preserve_which != 0){
+                        space = Workingspace::Floatspace_gamma;
+                        double multiplier = Math::Pow (0.7 * (preserve_which / 10.0) + 1, 1.4);
+                        space_param_a = 2.2 * multiplier;
+                    }
+
+                    //Without gamma correction is equal to setting f.preserve=-6.1515
 
                     opts->debug_options = System::String::IsNullOrEmpty (query->Get ("f.hist")) ? 0 : 1;
                     //TODO: permit it to work with increments of 90 rotation
@@ -126,7 +139,7 @@ namespace ImageResizer{
                                 context->AutoFloatspace (renderer->source_bgra ());
                             }
                             else{
-                                context->UseFloatspace (space, (float)GetDouble (query, "f.a", 0), (float)GetDouble (query, "f.b", 0), (float)GetDouble (query, "f.c", 0));
+                                context->UseFloatspace (space, space_param_a, space_param_b, space_param_c);
                             }
 
                             renderer->Render ();
