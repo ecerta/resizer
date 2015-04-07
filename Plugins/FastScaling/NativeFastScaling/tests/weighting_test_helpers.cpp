@@ -169,20 +169,20 @@ bool test_weight_distrib(Context * context, char *msg)
 
     //These should be negative between x=1 and x=2, positive between 2 and 3, but should end at 3
 
-    if (!test_filter(context, InterpolationFilter::Filter_Lanczos3, msg, 1, 2, 1, 0.1, 3)) return false;
-    if (!test_filter(context, InterpolationFilter::Filter_Lanczos3Sharp, msg, 0.98, 1.9625, 1, 0.1, 2.943)) return false;
+    if (!test_filter (context, InterpolationFilter::Filter_RawLanczos3, msg, 1, 2, 1, 0.1, 3)) return false;
+    if (!test_filter (context, InterpolationFilter::Filter_RawLanczos3Sharp, msg, 0.98, 1.9625, 1, 0.1, 2.943)) return false;
 
     ///
-    if (!test_filter(context, InterpolationFilter::Filter_Lanczos2Windowed, msg, 1, 2, 1, 0.08, 2)) return false;
+    if (!test_filter(context, InterpolationFilter::Filter_Lanczos2, msg, 1, 2, 1, 0.08, 2)) return false;
 
-    if (!test_filter(context, InterpolationFilter::Filter_Lanczos2SharpWindowed, msg, 0.954, 1.86, 1, 0.08, 2)) return false;
+    if (!test_filter(context, InterpolationFilter::Filter_Lanczos2Sharp, msg, 0.954, 1.86, 1, 0.08, 2)) return false;
 
     //These should be negative between x=1 and x=2, positive between 2 and 3, but should end at 3
 
-    if (!test_filter(context, InterpolationFilter::Filter_Lanczos3Windowed, msg, 1, 2, 1, 0.1, 3)) return false;
+    if (!test_filter(context, InterpolationFilter::Filter_Lanczos, msg, 1, 2, 1, 0.1, 3)) return false;
 
 
-    if (!test_filter(context, InterpolationFilter::Filter_Lanczos3SharpWindowed, msg, 0.98, 1.9625, 1, 0.1, 2.943)) return false;
+    if (!test_filter(context, InterpolationFilter::Filter_LanczosSharp, msg, 0.98, 1.9625, 1, 0.1, 2.943)) return false;
     return true;
 }
 

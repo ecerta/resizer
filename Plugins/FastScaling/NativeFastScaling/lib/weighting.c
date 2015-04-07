@@ -224,26 +224,27 @@ InterpolationDetails * InterpolationDetails_create_from(Context * context, Inter
     case Filter_Linear:
     case Filter_Triangle:
         return InterpolationDetails_create_custom(context, 1, 1, filter_triangle);
-    case Filter_Lanczos2:
+
+    case Filter_RawLanczos2:
         return InterpolationDetails_create_custom(context, 2, 1, filter_sinc);
-    case Filter_Lanczos3: //Note - not a 3 lobed function - truncated to 2
+    case Filter_RawLanczos3:
         return InterpolationDetails_create_custom(context, 3, 1, filter_sinc);
-    case Filter_Lanczos2Sharp:
+    case Filter_RawLanczos2Sharp:
         return InterpolationDetails_create_custom(context, 2, 0.9549963639785485, filter_sinc);
-    case Filter_Lanczos3Sharp:
+    case Filter_RawLanczos3Sharp:
         return InterpolationDetails_create_custom(context, 3, 0.9812505644269356, filter_sinc);
 
     //Hermite and BSpline no negative weights
     case Filter_CubicBSpline:
         return InterpolationDetails_create_bicubic_custom(context, 2, 1, 1, 0);
 
-    case Filter_Lanczos2Windowed:
+    case Filter_Lanczos2:
         return InterpolationDetails_create_custom(context, 2, 1, filter_sinc_windowed);
-    case Filter_Lanczos3Windowed:
+    case Filter_Lanczos:
         return InterpolationDetails_create_custom(context, 3, 1, filter_sinc_windowed);
-    case Filter_Lanczos2SharpWindowed:
+    case Filter_Lanczos2Sharp:
         return InterpolationDetails_create_custom(context, 2, 0.9549963639785485, filter_sinc_windowed);
-    case Filter_Lanczos3SharpWindowed:
+    case Filter_LanczosSharp:
         return InterpolationDetails_create_custom(context, 3, 0.9812505644269356, filter_sinc_windowed);
 
 
@@ -251,6 +252,8 @@ InterpolationDetails * InterpolationDetails_create_from(Context * context, Inter
         return InterpolationDetails_create_custom(context, 1, 1, filter_bicubic_fast);
     case Filter_Cubic:
         return InterpolationDetails_create_bicubic_custom(context, 2, 1, 0,1);
+    case Filter_CubicSharp:
+        return InterpolationDetails_create_bicubic_custom (context, 2, 0.9549963639785485, 0, 1);
     case Filter_CatmullRom:
         return InterpolationDetails_create_bicubic_custom(context, 2, 1, 0, 0.5);
     case Filter_CatmullRomFast:
@@ -281,6 +284,11 @@ InterpolationDetails * InterpolationDetails_create_from(Context * context, Inter
 
     case Filter_Ginseng:
         return InterpolationDetails_create_custom (context, 3, 1, filter_ginseng);
+
+    case Filter_GinsengSharp:
+        return InterpolationDetails_create_custom (context, 3, 0.9812505644269356, filter_ginseng);
+
+
 
     case Filter_Jinc:
         return InterpolationDetails_create_custom (context, 3, 1.0 / 1.2196698912665045, filter_jinc);

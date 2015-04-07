@@ -22,6 +22,7 @@ using namespace System::Diagnostics;
 using namespace System::Collections::Specialized;
 using namespace System::Runtime::InteropServices;
 using namespace ImageResizer::Plugins::FastScaling::internal_use_only;
+using namespace ImageResizer::ExtensionMethods;
 
 namespace ImageResizer{
 	namespace Plugins{
@@ -55,6 +56,48 @@ namespace ImageResizer{
                     }
                 }
 
+                RenderOptions^ ParseOptions (NameValueCollection^ query, bool downscaling){
+
+                    String^ prefix = downscaling ? "downscale." : "upscale.";
+
+                    RenderOptions^ opts = gcnew RenderOptions ();
+
+
+                    opts->SamplingBlurFactor = (float)GetDouble (query, prefix + "blur", 1.0);
+
+                    opts->SamplingWindowOverride = (float)GetDouble (query, prefix +  "window", 0);
+
+                    opts->InterpolateLastPercent = GetDouble (query, prefix + "interpolate_at_least", opts->InterpolateLastPercent);
+
+                    opts->InterpolateLastPercent = GetDouble (query, "f.interpolate_at_least", opts->InterpolateLastPercent);
+
+                    opts->InterpolateLastPercent = opts->InterpolateLastPercent < 1 ? -1 : opts->InterpolateLastPercent;
+
+                    internal_use_only::InterpolationFilter defaultFilter = downscaling ? internal_use_only::InterpolationFilter::Filter_Robidoux : internal_use_only::InterpolationFilter::Filter_Ginseng;
+
+                    Workingspace defaultColorspcace = downscaling ? Workingspace::Floatspace_linear : Workingspace::Floatspace_as_is;
+
+
+                    opts->Filter = (::InterpolationFilter) NameValueCollectionExtensions::Get<internal_use_only::InterpolationFilter> (query, prefix + "f", defaultFilter);
+
+                    opts->ScalingColorspace = NameValueCollectionExtensions::Get<Workingspace> (query, prefix + "cs", defaultColorspcace);
+                    opts->ColorspaceParamA = (float)GetDouble (query, prefix + "cs.a", 0);
+                    opts->ColorspaceParamB = (float)GetDouble (query, prefix + "cs.b", 0);
+                    opts->ColorspaceParamC = (float)GetDouble (query, prefix + "cs.c", 0);
+
+                    double preserve_which = fmax (-9.999, fmin (9.999, GetDouble (query, prefix + "preserve", 0)));
+                    if (preserve_which != 0){
+                        opts->ScalingColorspace = Workingspace::Floatspace_gamma;
+                        double multiplier = Math::Pow (0.7 * (preserve_which / 10.0) + 1, 1.4);
+                        opts->ColorspaceParamA = (float)( 2.2 * multiplier);
+                    }
+
+                    //Without gamma correction is equal to setting f.preserve=-6.1515
+
+                    return opts;
+                }
+
+
                 virtual RequestedAction InternalGraphicsDrawImage(ImageState^ s, Bitmap^ dest, Bitmap^ source, array<PointF>^ targetArea, RectangleF sourceArea, array<array<float, 1>^, 1>^ colorMatrix) override{
 
                     NameValueCollection ^query = s->settingsAsCollection();
@@ -67,47 +110,21 @@ namespace ImageResizer{
 						return RequestedAction::None;
 					}
 
-                    RenderOptions^ opts = gcnew RenderOptions();
+                    //TODO: permit it to work with increments of 90 rotation
+                    //Write polygon math method to determin the angle of the target area.
+                    RectangleF targetBox = ImageResizer::Util::PolygonMath::GetBoundingBox (targetArea);
+                    if (targetBox.Location != targetArea[0] || targetArea[1].Y != targetArea[0].Y || targetArea[2].X != targetArea[0].X){
+                        return RequestedAction::None;
+                    }
 
 
-                    opts->SamplingBlurFactor = (float)GetDouble (query, "f.blur", 1.0);
+                    bool downscaling = (targetBox.Width < sourceArea.Width && targetBox.Height < sourceArea.Height);
 
-                    opts->SamplingWindowOverride = (float)GetDouble (query, "f.window", 0);
 
-                    opts->Filter = (::InterpolationFilter)(uint32_t)(float)GetDouble (query, "f", 0);
+                    RenderOptions^ opts = ParseOptions (query, downscaling);
 
 
                     opts->SharpeningPercentGoal = (float)(GetDouble (query, "f.sharpen", 0) / 200.0);
-
-                    opts->SharpeningPercentGoal = fminf(fmaxf(0.0f, opts->SharpeningPercentGoal), 0.5f);
-
-                    opts->InterpolateLastPercent = GetDouble (query, "f.interpolate_at_least", opts->InterpolateLastPercent);
-
-                    opts->InterpolateLastPercent = opts->InterpolateLastPercent < 1 ? -1 : opts->InterpolateLastPercent;
-
-
-                    Workingspace space = (Workingspace)(int)fmax (-1, fmin (200, GetDouble (query, "f.space", 1)));
-                    float space_param_a = (float)GetDouble (query, "f.a", 0);
-                    float space_param_b = (float)GetDouble (query, "f.b", 0);
-                    float space_param_c = (float)GetDouble (query, "f.c", 0);
-
-                    double preserve_which = fmax (-9.999, fmin (9.999, GetDouble (query, "f.preserve", 0)));
-                    if (preserve_which != 0){
-                        space = Workingspace::Floatspace_gamma;
-                        double multiplier = Math::Pow (0.7 * (preserve_which / 10.0) + 1, 1.4);
-                        space_param_a = 2.2 * multiplier;
-                    }
-
-                    //Without gamma correction is equal to setting f.preserve=-6.1515
-
-
-                    //TODO: permit it to work with increments of 90 rotation
-                    //Write polygon math method to determin the angle of the target area.
-
-					RectangleF targetBox = ImageResizer::Util::PolygonMath::GetBoundingBox(targetArea);
-                    if (targetBox.Location != targetArea[0] || targetArea[1].Y != targetArea[0].Y || targetArea[2].X != targetArea[0].X){
-						return RequestedAction::None;
-                    }
 
                     bool sourceFormatInvalid = (source->PixelFormat != PixelFormat::Format32bppArgb &&
                         source->PixelFormat != PixelFormat::Format24bppRgb &&
@@ -126,7 +143,7 @@ namespace ImageResizer{
                             a->Bitmap = source;
                         }
                         else{
-                            copy = gcnew Bitmap (source->Width, source->Height, PixelFormat::Format32bppArgb);
+                            copy = gcnew Bitmap (source->Width,source->Height, PixelFormat::Format32bppArgb);
                             copyGraphics = System::Drawing::Graphics::FromImage (copy);
                             copyGraphics->CompositingMode = Drawing2D::CompositingMode::SourceCopy;
                             copyGraphics->DrawImageUnscaled (source, 0, 0);
@@ -152,10 +169,7 @@ namespace ImageResizer{
                             ManagedRenderer^ renderer;
                             try{
                                 renderer = gcnew ManagedRenderer (context, a, b, opts, s->Job->Profiler);
-                            if (space != Workingspace::Floatspace_linear){
-                                context->UseFloatspace (space, space_param_a, space_param_b, space_param_c);
-                            }
-                            	renderer->Render ();
+                                renderer->Render ();
                             }
                             finally{
                                 delete renderer;
