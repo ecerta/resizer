@@ -74,7 +74,7 @@ namespace ImageResizer{
 
                     opts->SamplingWindowOverride = (float)GetDouble (query, "f.window", 0);
 
-                    opts->Filter = (::InterpolationFilter)(uint32_t)(float)GetDouble (query, "f", 0);
+
 
 
                     opts->SharpeningPercentGoal = (float)(GetDouble (query, "f.sharpen", 0) / 200.0);
@@ -100,15 +100,21 @@ namespace ImageResizer{
 
                     //Without gamma correction is equal to setting f.preserve=-6.1515
 
+                    //When upscaling, use f.preserve = -6.8686 to reduce halos.
+
                     opts->debug_options = System::String::IsNullOrEmpty (query->Get ("f.hist")) ? 0 : 1;
                     //TODO: permit it to work with increments of 90 rotation
                     //Write polygon math method to determin the angle of the target area.
 
 					RectangleF targetBox = ImageResizer::Util::PolygonMath::GetBoundingBox(targetArea);
+
                     if (targetBox.Location != targetArea[0] || targetArea[1].Y != targetArea[0].Y || targetArea[2].X != targetArea[0].X){
 						return RequestedAction::None;
                     }
+                    ::InterpolationFilter defaultFilter = (targetBox.Width < sourceArea.Width && targetBox.Height < sourceArea.Height) ? ::InterpolationFilter::Filter_Robidoux : ::InterpolationFilter::Filter_Ginseng;
 
+                    opts->Filter = (int32_t)GetDouble (query, "f", defaultFilter);
+                    if (opts->Filter == -1) opts->Filter = defaultFilter;
 
                     BitmapOptions^ a = gcnew BitmapOptions();
                     a->AllowSpaceReuse = false;
