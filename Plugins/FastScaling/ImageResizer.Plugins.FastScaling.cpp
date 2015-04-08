@@ -58,7 +58,7 @@ namespace ImageResizer{
 
                 RenderOptions^ ParseOptions (NameValueCollection^ query, bool downscaling, bool colorMatrixPresent){
 
-                    String^ prefix = downscaling ? "downscale." : "upscale.";
+                    String^ prefix = downscaling ? "down." : "up.";
 
                     RenderOptions^ opts = gcnew RenderOptions ();
 
@@ -76,12 +76,12 @@ namespace ImageResizer{
                     internal_use_only::InterpolationFilter defaultFilter = downscaling ? internal_use_only::InterpolationFilter::Filter_Robidoux : internal_use_only::InterpolationFilter::Filter_Ginseng;
 
 
-                    opts->Filter = (::InterpolationFilter) NameValueCollectionExtensions::Get<internal_use_only::InterpolationFilter> (query, prefix + "f", defaultFilter);
+                    opts->Filter = (::InterpolationFilter) NameValueCollectionExtensions::Get<internal_use_only::InterpolationFilter> (query, prefix + "filter", defaultFilter);
 
-                    opts->ScalingColorspace = NameValueCollectionExtensions::Get<Workingspace> (query, prefix + "cs", Workingspace::Floatspace_as_is);
-                    opts->ColorspaceParamA = (float)GetDouble (query, prefix + "cs.a", 0);
-                    opts->ColorspaceParamB = (float)GetDouble (query, prefix + "cs.b", 0);
-                    opts->ColorspaceParamC = (float)GetDouble (query, prefix + "cs.c", 0);
+                    opts->ScalingColorspace = NameValueCollectionExtensions::Get<Workingspace> (query, prefix + "colorspace", Workingspace::Floatspace_as_is);
+                    opts->ColorspaceParamA = (float)GetDouble (query, prefix + "colorspace.a", 0);
+                    opts->ColorspaceParamB = (float)GetDouble (query, prefix + "colorspace.b", 0);
+                    opts->ColorspaceParamC = (float)GetDouble (query, prefix + "colorspace.c", 0);
 
                     if (colorMatrixPresent){
                         opts->ScalingColorspace = Workingspace::Floatspace_as_is;
@@ -109,7 +109,7 @@ namespace ImageResizer{
 					String^ sTrue = "true";
 
                     if (!System::String::IsNullOrEmpty (query->Get ("f"))){
-                        throw gcnew Exception ("&f is deprecated. Used &downscale.f instead.");
+                        throw gcnew Exception ("&f is deprecated. Used &down.filter instead.");
                     }
 
                     if (System::String::IsNullOrEmpty (query->Get ("f.sharpen")) && (fastScale == nullptr || fastScale->ToLowerInvariant () != sTrue)){
