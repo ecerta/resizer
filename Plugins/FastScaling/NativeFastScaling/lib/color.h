@@ -105,7 +105,7 @@ static inline uint8_t Context_floatspace_to_srgb (Context * context, float space
     v = context->colorspace.apply_sigmoid ? sigmoid_inverse (&context->colorspace.sigmoid, v) : v;
 #endif
 
-    if (context->colorspace.apply_gamma) return uchar_clamp_ff(apply_gamma (context, v));
+    if (context->colorspace.apply_gamma) return uchar_clamp_ff(apply_gamma (context, v) * 255.0f);
     if (context->colorspace.apply_srgb) return uchar_clamp_ff (linear_to_srgb (v));
     return uchar_clamp_ff(255.0f * v);
 }
