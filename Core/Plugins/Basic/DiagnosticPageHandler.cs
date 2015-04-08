@@ -189,7 +189,10 @@ namespace ImageResizer.Plugins.Basic {
             }catch(SecurityException){
                 sb.AppendLine("Failed to detect operating system bitness - security restrictions prevent reading environment variables");
             }
-
+            if (System.Web.HttpContext.Current != null){
+   
+                sb.AppendLine("This diagnostics page was requested from host " + System.Web.HttpContext.Current.Request.Url.DnsSafeHost);
+            }
             // PROCESSOR_ARCHITECTURE	x86	AMD64	x86
             // PROCESSOR_ARCHITEW6432	undefined	undefined	AMD64
 
