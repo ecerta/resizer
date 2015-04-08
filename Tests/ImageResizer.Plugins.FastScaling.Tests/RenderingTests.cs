@@ -53,7 +53,7 @@ namespace ImageResizer.Plugins.FastScaling.Tests
         {
             String imgdir = root + "Samples\\Images\\";
             Bitmap input = new Bitmap(imgdir + "premult-test.png");
-            Bitmap output = BuildFast(input, "fastscale=true&width=256&bgcolor=blue&downscale.f=cubicfast");
+            Bitmap output = BuildFast(input, "fastscale=true&width=256&bgcolor=blue&downscale.cs=linear&downscale.f=cubicfast");
 
             Color px = output.GetPixel(5, 5);
             Color tst = Color.FromArgb(255, 0, 188, 187);

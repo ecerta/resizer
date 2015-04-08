@@ -56,7 +56,7 @@ namespace ImageResizer{
                     }
                 }
 
-                RenderOptions^ ParseOptions (NameValueCollection^ query, bool downscaling){
+                RenderOptions^ ParseOptions (NameValueCollection^ query, bool downscaling, bool colorMatrixPresent){
 
                     String^ prefix = downscaling ? "downscale." : "upscale.";
 
@@ -75,18 +75,21 @@ namespace ImageResizer{
 
                     internal_use_only::InterpolationFilter defaultFilter = downscaling ? internal_use_only::InterpolationFilter::Filter_Robidoux : internal_use_only::InterpolationFilter::Filter_Ginseng;
 
-                    Workingspace defaultColorspcace = downscaling ? Workingspace::Floatspace_linear : Workingspace::Floatspace_as_is;
-
 
                     opts->Filter = (::InterpolationFilter) NameValueCollectionExtensions::Get<internal_use_only::InterpolationFilter> (query, prefix + "f", defaultFilter);
 
-                    opts->ScalingColorspace = NameValueCollectionExtensions::Get<Workingspace> (query, prefix + "cs", defaultColorspcace);
+                    opts->ScalingColorspace = NameValueCollectionExtensions::Get<Workingspace> (query, prefix + "cs", Workingspace::Floatspace_as_is);
                     opts->ColorspaceParamA = (float)GetDouble (query, prefix + "cs.a", 0);
                     opts->ColorspaceParamB = (float)GetDouble (query, prefix + "cs.b", 0);
                     opts->ColorspaceParamC = (float)GetDouble (query, prefix + "cs.c", 0);
 
-                    double preserve_which = fmax (-9.999, fmin (9.999, GetDouble (query, prefix + "preserve", 0)));
-                    if (preserve_which != 0){
+                    if (colorMatrixPresent){
+                        opts->ScalingColorspace = Workingspace::Floatspace_as_is;
+                    }
+
+                    double preserve_which = GetDouble (query, prefix + "preserve", -1000.0);
+                    if (preserve_which > -999){
+                        preserve_which = fmax (-9.999, fmin (9.999, preserve_which));
                         opts->ScalingColorspace = Workingspace::Floatspace_gamma;
                         double multiplier = Math::Pow (0.7 * (preserve_which / 10.0) + 1, 1.4);
                         opts->ColorspaceParamA = (float)( 2.2 * multiplier);
@@ -105,8 +108,11 @@ namespace ImageResizer{
                     String^ fastScale = query->Get("fastscale");
 					String^ sTrue = "true";
 
+                    if (!System::String::IsNullOrEmpty (query->Get ("f"))){
+                        throw gcnew Exception ("&f is deprecated. Used &downscale.f instead.");
+                    }
 
-                    if (System::String::IsNullOrEmpty (query->Get ("f")) && (fastScale == nullptr || fastScale->ToLowerInvariant () != sTrue)){
+                    if (System::String::IsNullOrEmpty (query->Get ("f.sharpen")) && (fastScale == nullptr || fastScale->ToLowerInvariant () != sTrue)){
 						return RequestedAction::None;
 					}
 
@@ -121,7 +127,7 @@ namespace ImageResizer{
                     bool downscaling = (targetBox.Width < sourceArea.Width && targetBox.Height < sourceArea.Height);
 
 
-                    RenderOptions^ opts = ParseOptions (query, downscaling);
+                    RenderOptions^ opts = ParseOptions (query, downscaling, colorMatrix != nullptr);
 
 
                     opts->SharpeningPercentGoal = (float)(GetDouble (query, "f.sharpen", 0) / 200.0);
@@ -197,7 +203,7 @@ namespace ImageResizer{
 				}
 
                 virtual System::Collections::Generic::IEnumerable<System::String^>^ GetSupportedQuerystringKeys (){
-                    return gcnew array < String^, 1 > {"f.sharpen", "f.unsharp.radius"};
+                    return gcnew array < String^, 1 > {"f.sharpen"}; //Only list the keys that would activate image processing by themselves, in the absence of any other commands
                 }
 
 			};

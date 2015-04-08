@@ -174,9 +174,8 @@ namespace ImageResizer{
                         if (p != nullptr) p->Start ("managed_perform_render", false);
                         if (p != nullptr) p->Start ("set_colorspace", false);
 
-                        if (originalOptions->ScalingColorspace != Workingspace::Floatspace_linear){
-                            c->UseFloatspace (originalOptions->ScalingColorspace, originalOptions->ColorspaceParamA, originalOptions->ColorspaceParamB, originalOptions->ColorspaceParamC);
-                        }
+                        c->UseFloatspace (originalOptions->ScalingColorspace, originalOptions->ColorspaceParamA, originalOptions->ColorspaceParamB, originalOptions->ColorspaceParamC);
+
 
                         if (p != nullptr) p->Stop ("set_colorspace", true, true);
 
