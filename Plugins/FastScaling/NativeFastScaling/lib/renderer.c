@@ -129,13 +129,11 @@ bool RenderDetails_render_in_place(
 }
 
 static float Renderer_percent_loss (int from_width, int to_width, int from_height, int to_height, int divisor){
-    int halved_width = from_width / divisor;
-    int halved_height = from_height / divisor;
     int lost_columns = from_width % divisor;
     int lost_rows = from_height % divisor;
     float scale_factor_x = (float)to_width / (float)from_width;
     float scale_factor_y = (float)to_width / (float)from_width;
-    return fmax (lost_rows * scale_factor_y, lost_columns * scale_factor_y);
+    return (float)fmax (lost_rows * scale_factor_y, lost_columns * scale_factor_x);
 }
 
 static int Renderer_determine_divisor(Renderer * r)
