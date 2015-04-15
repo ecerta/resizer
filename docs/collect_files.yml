@@ -105,6 +105,16 @@ files:
 - from: docs/virtualfolder_readme.md
   to: plugins/virtualfolder.md
 
+#Plugin documentation from plugins in other folders
+- from: docs/mvcroutingshim_readme.md
+  to: plugins/mvcroutingshim.md
+- from: docs/pdfrenderer_readme.md
+  to: plugins/pdfrenderer.md
+- from: docs/croparound_readme.md
+  to: plugins/croparound.md
+- from: docs/customoverlay_readme.md
+  to: plugins/customoverlay.md
+
 
 
 #Documentation from versioned readme file
