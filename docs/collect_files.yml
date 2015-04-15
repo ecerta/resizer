@@ -8,31 +8,21 @@ files:
   to: plugins/advancedfilters.slim
 - from: plugins/animatedgifs/readme.slim #slim
   to: plugins/animatedgifs.slim
-#- from: plugins/autorotate/readme.md
-#  to: plugins/autorotate.md
 - from: plugins/azurereader/readme.md
   to: plugins/azurereader.md
 - from: plugins/azurereader2/readme.md
   to: plugins/azurereader2.md
 - from: plugins/batchzipper/readme.md
   to: plugins/batchzipper.md
-#- from: plugins/clientcache/readme.md
-# to: plugins/clientcache.md
 - from: plugins/cloudfront/readme.md
   to: plugins/cloudfront.md
 - from: plugins/copymetadata/readme.md
   to: plugins/copymetadata.md
-#- from: plugins/croparound/readme.md
-#  to: plugins/croparound.md
-#- from: plugins/customoverlay/readme.md
-#  to: plugins/customoverlay.md
-#- from: plugins/defaultencoder/readme.md
-#  to: plugins/defaultencoder.md
 - from: plugins/diskcache/readme.md
   to: plugins/diskcache/index.md #for some reason this one lives in its own folder
 - from: plugins/azurereader2/readme.md
   to: plugins/azurereader2.md
-- from: plugins/faces/readme1.md #note: there's already a readme, so this is readme1
+- from: plugins/faces/readme.md
   to: plugins/faces.md
 - from: plugins/ffmpeg/readme.md
   to: plugins/ffmpeg.md
@@ -73,7 +63,7 @@ files:
 - from: plugins/wic/readme.md
   to: plugins/wic.md
 
-#Documentation
+#Extraneous version-specific documention -> docs pages
 - from: docs/makeplugin.md
   to: docs/extend/basics.md
 - from: docs/virtualimageprovider.md
@@ -83,32 +73,47 @@ files:
 - from: docs/faq.md
   to: docs/faq.md
 
+#Core plugin documentation -> plugins pages
+- from: docs/core_plugins/autorotate_readme.md
+  to: plugins/autorotate.md
+- from: docs/core_plugins/clientcache_readme.md
+  to: plugins/clientecache.md
+- from: docs/core_plugins/defaultencoder_readme.md
+  to: plugins/defaultencoder.md
+- from: docs/core_plugins/defaultsettings_readme.md
+  to: plugins/defaultsettings.md
+- from: docs/core_plugins/diagnostics_readme.md
+  to: plugins/diagnostics.md
+- from: docs/core_plugins/dropshadow_readme.md
+  to: plugins/dropshadow.md
+- from: docs/core_plugins/folderresizesyntax_readme.md
+  to: plugins/folderresizesyntax.md
+- from: docs/core_plugins/gradient_readme.md
+  to: plugins/gradient.md
+- from: docs/core_plugins/iepngfix_readme.md
+  to: plugins/iepngfix.md
+- from: docs/core_plugins/image404_readme.md
+  to: plugins/image404.md
+- from: docs/core_plugins/imagehandlersyntax_readme.md
+  to: plugins/imagehandlersyntax.md
+- from: docs/core_plugins/presets_readme.md
+  to: plugins/presets.md
+- from: docs/core_plugins/sizelimiting_readme.md
+  to: plugins/sizelimiting.md
+- from: docs/core_plugins/speedorquality_readme.md
+  to: plugins/speedorquality.md
+- from: docs/core_plugins/virtualfolder_readme.md
+  to: plugins/virtualfolder.md
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#Documentation from versioned readme file
 - from: readme.md
   render_and_split:
+    - to: "plugins/install_manually.htmf"  #NOTE: This doesn't exist on resizer-web yet
+      start_at: "a[name='install_plugin']"
+      stop_before: "a[name='reference']"
+      heading: Installing A Plugin Manually
     - to: "docs/reference.htmf"
       start_at: "a[name='full_command']"
       stop_before: "a[name='managed_api']"
@@ -121,3 +126,25 @@ files:
       start_at: "a[name='config_reference']"
       stop_before: "a[name='tricks']"
       heading: Configuration Reference
+    - to: docs/watermark-by-folder-or-size.htmf
+      start_at: "a[name='watermark']"
+      stop_before: "a[name='thumbnails']"
+      heading: Watermark Images Based on Folder Name or Display Size
+    - to: docs/configuration.htmf
+      start_at: "a[name='thumbnails']"
+      stop_before: "a[name='resize-upload']"
+      heading: Generate Thumbnails and Multiple Sizes to Disk
+    - to: docs/configuration.htmf
+      start_at: "a[name='resize_upload']"
+      stop_before: "a[name='troubleshooting']"
+      heading: Convert and Resize Images as They Are Uploaded
+    - to: docs/configuration.htmf
+      start_at: "a[name='troubleshooting']"
+      stop_before: "a[name='#everything_else']"
+      heading: Troubleshooting
+    
+
+
+
+
+
