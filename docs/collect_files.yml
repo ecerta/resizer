@@ -74,35 +74,35 @@ files:
   to: docs/faq.md
 
 #Core plugin documentation -> plugins pages
-- from: docs/core_plugins/autorotate_readme.md
+- from: docs/autorotate_readme.md
   to: plugins/autorotate.md
-- from: docs/core_plugins/clientcache_readme.md
+- from: docs/clientcache_readme.md
   to: plugins/clientecache.md
-- from: docs/core_plugins/defaultencoder_readme.md
+- from: docs/defaultencoder_readme.md
   to: plugins/defaultencoder.md
-- from: docs/core_plugins/defaultsettings_readme.md
+- from: docs/defaultsettings_readme.md
   to: plugins/defaultsettings.md
-- from: docs/core_plugins/diagnostics_readme.md
+- from: docs/diagnostics_readme.md
   to: plugins/diagnostics.md
-- from: docs/core_plugins/dropshadow_readme.md
+- from: docs/dropshadow_readme.md
   to: plugins/dropshadow.md
-- from: docs/core_plugins/folderresizesyntax_readme.md
+- from: docs/folderresizesyntax_readme.md
   to: plugins/folderresizesyntax.md
-- from: docs/core_plugins/gradient_readme.md
+- from: docs/gradient_readme.md
   to: plugins/gradient.md
-- from: docs/core_plugins/iepngfix_readme.md
+- from: docs/iepngfix_readme.md
   to: plugins/iepngfix.md
-- from: docs/core_plugins/image404_readme.md
+- from: docs/image404_readme.md
   to: plugins/image404.md
-- from: docs/core_plugins/imagehandlersyntax_readme.md
+- from: docs/imagehandlersyntax_readme.md
   to: plugins/imagehandlersyntax.md
-- from: docs/core_plugins/presets_readme.md
+- from: docs/presets_readme.md
   to: plugins/presets.md
-- from: docs/core_plugins/sizelimiting_readme.md
+- from: docs/sizelimiting_readme.md
   to: plugins/sizelimiting.md
-- from: docs/core_plugins/speedorquality_readme.md
+- from: docs/speedorquality_readme.md
   to: plugins/speedorquality.md
-- from: docs/core_plugins/virtualfolder_readme.md
+- from: docs/virtualfolder_readme.md
   to: plugins/virtualfolder.md
 
 
