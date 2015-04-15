@@ -1,0 +1,123 @@
+patterns:
+- "/**/*.md"
+- "/**/*.slim"
+
+files:
+#Plugins Readmes -> Plugins Pages
+- from: plugins/advancedfilters/readme.slim #slim
+  to: plugins/advancedfilters.slim
+- from: plugins/animatedgifs/readme.slim #slim
+  to: plugins/animatedgifs.slim
+#- from: plugins/autorotate/readme.md
+#  to: plugins/autorotate.md
+- from: plugins/azurereader/readme.md
+  to: plugins/azurereader.md
+- from: plugins/azurereader2/readme.md
+  to: plugins/azurereader2.md
+- from: plugins/batchzipper/readme.md
+  to: plugins/batchzipper.md
+#- from: plugins/clientcache/readme.md
+# to: plugins/clientcache.md
+- from: plugins/cloudfront/readme.md
+  to: plugins/cloudfront.md
+- from: plugins/copymetadata/readme.md
+  to: plugins/copymetadata.md
+#- from: plugins/croparound/readme.md
+#  to: plugins/croparound.md
+#- from: plugins/customoverlay/readme.md
+#  to: plugins/customoverlay.md
+#- from: plugins/defaultencoder/readme.md
+#  to: plugins/defaultencoder.md
+- from: plugins/diskcache/readme.md
+  to: plugins/diskcache/index.md #for some reason this one lives in its own folder
+- from: plugins/azurereader2/readme.md
+  to: plugins/azurereader2.md
+- from: plugins/faces/readme1.md #note: there's already a readme, so this is readme1
+  to: plugins/faces.md
+- from: plugins/ffmpeg/readme.md
+  to: plugins/ffmpeg.md
+- from: plugins/freeimage/readme.md
+  to: plugins/freeimage.md
+- from: plugins/logging/readme.md
+  to: plugins/logging.md
+- from: plugins/azurereader2/readme.md
+  to: plugins/azurereader2.md
+- from: plugins/mongoreader/readme.md
+  to: plugins/mongoreader.md
+- from: plugins/prettygifs/readme.slim #slim
+  to: plugins/prettygifs.slim
+- from: plugins/psdcomposer/readme.md
+  to: plugins/psdcomposer.md
+- from: plugins/psdreader/readme.md
+  to: plugins/psdreader.md
+- from: plugins/redeye/readme.md
+  to: plugins/redeye.md
+- from: plugins/remotereader/readme.md
+  to: plugins/remotereader.md
+- from: plugins/s3reader/readme.md
+  to: plugins/s3reader.md
+- from: plugins/s3reader2/readme.md
+  to: plugins/s3reader2.md
+- from: plugins/seamcarving/readme.md
+  to: plugins/seamcarving.md
+- from: plugins/simplefilters/readme.slim #slim
+  to: plugins/simplefilters.slim
+- from: plugins/sqlreader/readme.md
+  to: plugins/sqlreader.md
+- from: plugins/watermark/readme.md
+  to: plugins/watermark.md
+- from: plugins/webp/readme.md
+  to: plugins/webp.md
+- from: plugins/whitespacetrimmer/readme.slim #slim
+  to: plugins/whitespacetrimmer.slim
+- from: plugins/wic/readme.md
+  to: plugins/wic.md
+
+#Documentation
+- from: docs/makeplugin.md
+  to: docs/extend/basics.md
+- from: docs/virtualimageprovider.md
+  to: docs/extend/virtualimageprovider.md
+- from: docs/troubleshoot.md
+  to: docs/troubleshoot.md
+- from: docs/faq.md
+  to: docs/faq.md
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+- from: readme.md
+  render_and_split:
+    - to: "docs/reference.htmf"
+      start_at: "a[name='full_command']"
+      stop_before: "a[name='managed_api']"
+      heading: Full Command Reference
+    - to: docs/managed.htmf
+      start_at: "a[name='managed_api']"
+      stop_before: "a[name='config_reference']"
+      heading: Managed API
+    - to: docs/configuration.htmf
+      start_at: "a[name='config_reference']"
+      stop_before: "a[name='tricks']"
+      heading: Configuration Reference
