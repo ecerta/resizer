@@ -4,63 +4,59 @@ patterns:
 
 files:
 #Plugins Readmes -> Plugins Pages
-- from: plugins/advancedfilters/readme.slim #slim
+- from: Plugins/AdvancedFilters/readme.slim #slim
   to: plugins/advancedfilters.slim
-- from: plugins/animatedgifs/readme.slim #slim
+- from: Plugins/AnimatedGifs/readme.slim #slim
   to: plugins/animatedgifs.slim
-- from: plugins/azurereader/readme.md
+- from: Plugins/AzureReader/readme.md
   to: plugins/azurereader.md
-- from: plugins/azurereader2/readme.md
-  to: plugins/azurereader2.md
-- from: plugins/batchzipper/readme.md
+- from: Plugins/AzureReader2/readme.md
+  to: plugins/AzureReader2.md
+- from: Plugins/BatchZipper/readme.md
   to: plugins/batchzipper.md
-- from: plugins/cloudfront/readme.md
+- from: Plugins/CloudFront/readme.md
   to: plugins/cloudfront.md
-- from: plugins/copymetadata/readme.md
+- from: Plugins/CopyMetadata/readme.md
   to: plugins/copymetadata.md
-- from: plugins/diskcache/readme.md
+- from: Plugins/DiskCache/readme.md
   to: plugins/diskcache/index.md #for some reason this one lives in its own folder
-- from: plugins/azurereader2/readme.md
-  to: plugins/azurereader2.md
-- from: plugins/faces/readme.md
+- from: Plugins/Faces/readme.md
   to: plugins/faces.md
-- from: plugins/ffmpeg/readme.md
+- from: Plugins/Ffmpeg/readme.md
   to: plugins/ffmpeg.md
-- from: plugins/freeimage/readme.md
+- from: Plugins/FreeImage/readme.md
   to: plugins/freeimage.md
-- from: plugins/logging/readme.md
+- from: Plugins/Logging/readme.md
   to: plugins/logging.md
-- from: plugins/azurereader2/readme.md
-  to: plugins/azurereader2.md
-- from: plugins/mongoreader/readme.md
-  to: plugins/mongoreader.md
-- from: plugins/prettygifs/readme.slim #slim
+- from: Plugins/MongoReader/readme.md
+  to: plugins/MongoReader.md
+- from: Plugins/PrettyGifs/readme.slim #slim
   to: plugins/prettygifs.slim
-- from: plugins/psdcomposer/readme.md
+- from: Plugins/PsdComposer/readme.md
   to: plugins/psdcomposer.md
-- from: plugins/psdreader/readme.md
+- from: Plugins/PsdReader/readme.md
   to: plugins/psdreader.md
-- from: plugins/redeye/readme.md
+- from: Plugins/RedEye/readme.md
   to: plugins/redeye.md
-- from: plugins/remotereader/readme.md
+- from: Plugins/RemoteReader/readme.md
   to: plugins/remotereader.md
-- from: plugins/s3reader/readme.md
+- from: Plugins/S3Reader/readme.md
   to: plugins/s3reader.md
-- from: plugins/s3reader2/readme.md
+- from: Plugins/R3Reader2/readme.md
   to: plugins/s3reader2.md
-- from: plugins/seamcarving/readme.md
+- from: Plugins/SeamCarving/readme.md
   to: plugins/seamcarving.md
-- from: plugins/simplefilters/readme.slim #slim
+- from: Plugins/SimpleFilters/readme.slim #slim
   to: plugins/simplefilters.slim
-- from: plugins/sqlreader/readme.md
+- from: Plugins/SqlReader/readme.md
   to: plugins/sqlreader.md
-- from: plugins/watermark/readme.md
+- from: Plugins/Watermark/readme.md
   to: plugins/watermark.md
-- from: plugins/webp/readme.md
+- from: Plugins/WebP/readme.md
   to: plugins/webp.md
-- from: plugins/whitespacetrimmer/readme.slim #slim
+- from: Plugins/WhitespaceTrimmer/readme.slim #slim
   to: plugins/whitespacetrimmer.slim
-- from: plugins/wic/readme.md
+- from: Plugins/Wic/readme.md
   to: plugins/wic.md
 
 #Extraneous version-specific documention -> docs pages
