@@ -22,7 +22,7 @@ files:
   to: plugins/diskcache/index.md #for some reason this one lives in its own folder
 - from: Plugins/Faces/readme.md
   to: plugins/faces.md
-- from: Plugins/Ffmpeg/readme.md
+- from: Plugins/FFmpeg/readme.md
   to: plugins/ffmpeg.md
 - from: Plugins/FreeImage/readme.md
   to: plugins/freeimage.md
@@ -42,7 +42,7 @@ files:
   to: plugins/remotereader.md
 - from: Plugins/S3Reader/readme.md
   to: plugins/s3reader.md
-- from: Plugins/R3Reader2/readme.md
+- from: Plugins/S3Reader2//readme.md
   to: plugins/s3reader2.md
 - from: Plugins/SeamCarving/readme.md
   to: plugins/seamcarving.md
