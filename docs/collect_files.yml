@@ -42,7 +42,7 @@ files:
   to: plugins/remotereader.md
 - from: Plugins/S3Reader/readme.md
   to: plugins/s3reader.md
-- from: Plugins/S3Reader2//readme.md
+- from: Plugins/S3Reader2/readme.md
   to: plugins/s3reader2.md
 - from: Plugins/SeamCarving/readme.md
   to: plugins/seamcarving.md
